@@ -1,0 +1,67 @@
+@model List<ShoppingCart.Models.Product>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title {
+    <a class="navbar-brand" asp-controller="Product" asp-action="Index">@ViewData["Title"]</a>
+}
+
+@section NavLink1 {
+    <a class="nav-link text-dark" asp-controller=@((bool)ViewData["isLoggedIn"] == true ? "Purchase" : "Auth") asp-action="Index">@((bool)ViewData["isLoggedIn"] ? "My Purchases" : "Login")</a>
+}
+
+@section NavLink2 {
+    @{
+        bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    }
+    @if (isLoggedIn){
+        <form method="POST" asp-controller="Auth" asp-action="Logout">
+            <button class="btn text-dark shadow-none" >Logout</button>
+        </form>
+    }
+}
+
+@section NavbarText {
+    <a id="totalQty" class="nav-link text-dark" asp-controller="Cart" asp-action="Index">
+        <i class="fas fa-shopping-cart"></i>
+        @ViewData["TotalQty"]
+    </a>
+}
+
+<div class="row my-4 justify-content-between">
+    <form class="form-inline col-12" method="POST" asp-controller="Product" asp-action="Index">
+        <input class="form-control col-10" display="block" type="search" onClick="this.select();" placeholder="Search" value=@ViewData["SearchBy"] aria-label="Search" name="searchBy">
+        <div class="col-2 pr-0">
+            <button class="btn btn-outline-secondary my-2 my-sm-0 col-12" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+@if (Model.Count() == 0) {
+        <h1>Sorry, No Match Result.</h1>
+    }else {
+    <div class="row row-cols-1 row-cols-md-3">
+        @foreach (var product in Model)
+        {
+            <div class="col-3 mb-4">
+                <div class="card h-100 border-secondary">
+                    <div class="card-header bg-transparent border-secondary h-50">
+                        <img src="~/img/@product.Image" class="card-img-top h-100"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="h-30">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Description</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-secondary">
+                        <a href="#" class="btn btn-secondary w-100 addToCart" value=@product.ProductId data-price=@product.Price>$@product.Price - Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+@section Scripts{
+    <script src="~/js/product.js"></script>
+}

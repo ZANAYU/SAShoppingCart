@@ -1,0 +1,26 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "ShoppingCart";
+}
+
+@section Title {
+    <a class="navbar-brand" asp-controller="Product" asp-action="Index">@ViewData["Title"]</a>
+}
+
+@section NavLink1 {
+    <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Home</a>
+}
+<div class="row justify-content-center">
+    <form id="signIn" class="col-10 col-md-4" data-returnUrl='@ViewData["ReturnUrl"]' >
+        <h1>Login</h1>
+        <input class="form-control" type="text" name="userName" placeholder="Username">
+        <input class="form-control" type="password" name="password" placeholder="Password">
+        <button class="btn btn-secondary btn-block mt-2">Sign In</button>
+    </form>
+</div>
+
+@section Scripts{
+    <script src="~/lib/md5/md5.min.js"></script>
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <script src="~/js/auth.js"></script>
+}

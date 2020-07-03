@@ -1,0 +1,93 @@
+@model ShoppingCart.Models.Cart
+@{ 
+    Layout= "~/Views/Shared/_Layout.cshtml"; 
+} 
+
+@section Title {
+    <a class="navbar-brand" href="#">View Cart</a>
+}
+
+@section NavLink1 {
+    <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Continue Shopping</a>
+}
+
+@section NavLink2 {
+    <a class="nav-link text-dark" asp-controller="Cart" asp-action="Checkout">Checkout</a>
+}
+
+@section NavbarText {
+    @if (Model != null && Model.CartDetails.Count() != 0) {
+        <a id="totalPrice" class="nav-link text-dark">Total: $@Model.Total</a>
+    }
+    else {
+        <a id="totalPrice" class="nav-link text-dark"></a>
+    }
+}
+
+@if ((bool)ViewData["isLoggedIn"] == false) {
+    <div class="container" id="cart"></div>
+}
+else if (Model == null || Model.CartDetails.Count() == 0) {
+    <h1 class="mt-4">Sorry, your cart is empty.</h1>
+}else {
+    <div class="row my-4 justify-content-between mx-0">
+        <button id="clearAll" class="btn btn-outline-danger my-2 my-sm-0 col-12 px-0" type="button">Clear All</button>
+    </div>
+    <div class="container">
+        @foreach (var cartDetail in Model.CartDetails)
+        {
+            <div class="row mt-4 product border border-secondary rounded bg-light pl-4" data-value=@cartDetail.ProductId>
+                <div class="col-5 h-100 my-auto">
+                    <div class="row">
+                        <div class="bg-transparent h-100 col-4 py-3">
+                            <img src="~/img/@cartDetail.Product.Image" class="card-img-top h-100"/>
+                        </div>
+                        <div class="card-body h-30 col-8">
+                            <h5 class="card-title">@cartDetail.Product.Name</h5>
+                            <p class="card-text mb-0 overflow-hidden text-left pr-2">@cartDetail.Product.Description</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="container h-100 pl-5">
+                        <div class="col align-middle d-inline">
+                            <div class="row">
+                                <div class="col-4">
+                                    <h5 class="card-title">Price: </h5>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title price">$@cartDetail.Product.Price</h5>
+                                </div> 
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <h5 class="card-title">Total: </h5>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title">$@(cartDetail.Product.Price * cartDetail.Qty)</h5>
+                                </div> 
+                            </div>
+                            <div class="row">
+                                <div class="col-4 my-auto">
+                                    <h5 class="card-title my-0">Quantity: </h5>
+                                </div>
+                                <div class="col-8">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" min="1" step="1" class="form-control border-secondary updateQty" data-value=@cartDetail.Qty value=@cartDetail.Qty onClick="this.select();" />
+                                        <div class="input-group-append removeCartDetail">
+                                            <button class="btn btn-outline-danger" type="button">Remove</button>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+@section Scripts{
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <script src="~/js/cart.js"></script>
+}

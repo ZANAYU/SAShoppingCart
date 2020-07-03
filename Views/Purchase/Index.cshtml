@@ -1,0 +1,113 @@
+@model List<ShoppingCart.Models.Order>
+@using System;
+@{
+    Layout= "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title {
+    <a class="navbar-brand" href="#">My Purchases</a>
+}
+
+@section NavLink1 {
+    <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Home</a>
+}
+
+@section NavLink2 {
+    <form method="POST" asp-controller="Auth" asp-action="Logout">
+        <button class="btn text-dark shadow-none" >Logout</button>
+    </form>
+}
+
+@functions {
+    string formatDateTime(DateTime dateTime)
+    {
+        return dateTime.ToLocalTime().ToString("d MMM yyyy - HH : mm");
+    }
+}
+
+@if (Model.Count() == 0) 
+{
+    <h1 class="mt-4">Sorry, your purchase history is empty.</h1>
+}
+else 
+{
+    <div class="container">
+        @foreach (var order in Model)
+        {
+            @foreach (var orderDetail in order.OrderDetails)
+            {
+                <div class="row mt-4 border border-secondary rounded bg-light pl-4">
+                    <div class="col-5 h-100 my-auto">
+                        <div class="row">
+                            <div class="bg-transparent h-100 col-4 py-3">
+                                <img src="~/img/@orderDetail.Product.Image" class="card-img-top h-100"/>
+                            </div>
+                            <div class="card-body h-30 col-8">
+                                @* <div class="h-30"> *@
+                                    <h5>@orderDetail.Product.Name</h5>
+                                    <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@orderDetail.Product.Description</p>
+                                @* </div> *@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="container h-100 pl-5 py-2">
+                            <div class="col align-middle d-inline">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Purchased On: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <p>@formatDateTime(order.UtcDateTime)</p>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Quantity: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <p>@orderDetail.Qty</p>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Activation Code: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="row">
+                                            <div class="dropdown col-6">
+                                                <button class="btn btn-sm btn-info dropdown-toggle w-100" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Code List
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    @for (int i = 0; i < orderDetail.Activations.Count(); i++)
+                                                    {
+                                                        <span class="dropdown-item codeItem" data-clipboard-text=@orderDetail.Activations.ElementAt(i).Code>@orderDetail.Activations.ElementAt(i).Code</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <a class="btn btn-sm btn-info w-100" href="~/file/ASP.NET Core in Action.pdf" download="ASP.NET Core in Action.pdf">Download</a>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+@section Scripts{
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <script src="~/lib/clipboard/dist/clipboard.min.js"></script>
+    <script>
+        var codeItem = document.getElementsByClassName('codeItem');
+        var clipboard = new ClipboardJS(codeItem);
+        clipboard.on('success', function(e) {
+            bootbox.alert("Copied to clipboard!!!");
+        });
+    </script>
+}
